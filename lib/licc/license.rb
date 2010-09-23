@@ -52,4 +52,10 @@ class License
         Prohibits: #{prohibits || '---'}
         """.strip.gsub(/  +/, '')
     end
+
+    def and(other)
+        {'permits' => @permits & other.permits,
+         'requires' => @requires | other.requires,
+         'prohibits' => @prohibits | other.prohibits}
+    end
 end
