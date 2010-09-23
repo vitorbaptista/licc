@@ -12,11 +12,12 @@ class License
     DC = 'http://purl.org/dc/elements/1.1/'
     DCQ = 'http://purl.org/dc/terms/'
 
-    def initialize(rdf_uri)
-        @permits = []
-        @requires = []
-        @prohibits = []
-        @identifier = ''
+    def self.parse(rdf_uri)
+        permits = []
+        requires = []
+        prohibits = []
+        identifier = ''
+        version = ''
 
         RDF::Reader.open(rdf_uri) do |reader|
             reader.each_statement do |s|
@@ -24,20 +25,27 @@ class License
                 predicate = s.predicate.to_s
 
                 # CC's licenses use DC, FSF's use DCQ. We test both.
-                @identifier = object if predicate == DC + 'identifier'
-                @identifier = object if predicate == DCQ + 'identifier'
+                identifier = object if predicate == DC + 'identifier'
+                identifier = object if predicate == DCQ + 'identifier'
 
-                @version = object    if predicate == DCQ + 'hasVersion'
-                @permits << object   if predicate == CC_PERMITS
-                @requires << object  if predicate == CC_REQUIRES
-                @prohibits << object if predicate == CC_PROHIBITS
+                version = object    if predicate == DCQ + 'hasVersion'
+                permits << object   if predicate == CC_PERMITS
+                requires << object  if predicate == CC_REQUIRES
+                prohibits << object if predicate == CC_PROHIBITS
             end
         end
 
-        @permits.sort!
-        @requires.sort!
-        @prohibits.sort!
-        @identifier.upcase!
+        permits.sort!
+        requires.sort!
+        prohibits.sort!
+        identifier.upcase!
+
+        License.new(identifier, version, permits, requires, prohibits)
+    end
+
+    def initialize(identifier, version, permits, requires, prohibits)
+        @identifier, @version = identifier, version
+        @permits, @requires, @prohibits = permits, requires, prohibits
     end
 
     def to_s
