@@ -6,10 +6,15 @@ module Licc
 
         def self.execute(stdout=STDOUT, stdin=STDIN, arguments=[])
             arguments.each { |license|
-                if not File.exists? license
-                    license = LICENSES_FOLDER + license.downcase + '.rdf'
+                license_path = license
+                if not File.exists? license_path
+                    license_path = LICENSES_FOLDER + license.downcase + '.rdf'
                 end
-                puts License.parse(license) if File.exists? license
+                if File.exists? license_path
+                    puts License.parse(license_path)
+                else
+                    puts "Unknown license \"#{license}\""
+                end
             }
         end
     end
