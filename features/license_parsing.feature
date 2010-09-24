@@ -12,3 +12,13 @@ Feature: Parsing of license files
         Requires: Copyleft, Notice, SourceCode
         Prohibits: ---
         """
+
+    Scenario: Analyzing an unknown local license
+        Given I run local executable "licc" with arguments "../lib/licc/licenses/gpl3.rdf"
+        Then I should see
+        """
+        GNU GPL 3.0
+        Permits: DerivativeWorks, Distribution, Reproduction
+        Requires: Copyleft, Notice, SourceCode
+        Prohibits: ---
+        """
