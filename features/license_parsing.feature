@@ -22,3 +22,10 @@ Feature: Parsing of license files
         Requires: Copyleft, Notice, SourceCode
         Prohibits: ---
         """
+
+    Scenario: Analyzing an inexistent license
+        Given I run local executable "licc" with arguments "an-inexistent-license"
+        Then I should see
+        """
+        Unknown license "an-inexistent-license"
+        """
