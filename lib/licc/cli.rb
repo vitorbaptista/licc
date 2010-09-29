@@ -14,6 +14,7 @@ module Licc
                     puts License.parse(license_path)
                 else
                     puts "Unknown license \"#{license}\""
+                    exit -1
                 end
             }
         end
