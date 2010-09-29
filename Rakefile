@@ -12,7 +12,8 @@ Hoe.plugin :cucumberfeatures
 $hoe = Hoe.spec 'licc' do
   self.developer 'Vitor Baptista', 'vitor@vitorbaptista.com'
   self.rubyforge_name       = self.name # TODO this is default value
-  self.extra_deps           = [['rdf-raptor','>= 0.4.0']]
+  self.extra_deps           = [['rdf-raptor','>= 0.4.0'],
+                               ['trollop', '>= 1.16']]
 end
 
 require 'newgem/tasks'
