@@ -5,6 +5,7 @@ Feature: Parsing of license files
 
     Scenario: Analyzing a known license
         Given I run local executable "licc" with arguments "gpl3"
+        Then it should exit successfully
         Then I should see
         """
         GNU GPL 3.0
@@ -15,6 +16,7 @@ Feature: Parsing of license files
 
     Scenario: Analyzing an unknown local license
         Given I run local executable "licc" with arguments "../lib/licc/licenses/gpl3.rdf"
+        Then it should exit successfully
         Then I should see
         """
         GNU GPL 3.0
@@ -25,6 +27,7 @@ Feature: Parsing of license files
 
     Scenario: Analyzing an inexistent license
         Given I run local executable "licc" with arguments "an-inexistent-license"
+        Then it should not exit successfully
         Then I should see
         """
         Unknown license "an-inexistent-license"
