@@ -60,6 +60,10 @@ module Licc
             """.strip.gsub(/  +/, '')
         end
 
+        def ==(other)
+          self.to_s == other.to_s
+        end
+
         def and(other)
             {'permits' => @permits & other.permits,
              'requires' => @requires | other.requires,
