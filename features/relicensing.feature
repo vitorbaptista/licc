@@ -7,3 +7,6 @@ Feature: Relicensing
             Given I run local executable "licc" with arguments "bsd --to gpl"
             Then it should exit successfully
 
+        Scenario: Is GPL relicensable to BSD?
+            Given I run local executable "licc" with arguments "gpl --to bsd"
+            Then it should not exit successfully
