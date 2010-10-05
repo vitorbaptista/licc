@@ -42,5 +42,24 @@ module Licc
 
             self
         end
+
+        def to_s
+            exit -1 if not combinable?
+            
+            combination = licenses.first
+            names = []
+            licenses.each { |license|
+                names << "#{license.identifier} #{license.version}".strip
+                combination += license
+            }
+
+            result = combination.to_s.split("\n")
+            result.shift
+
+            """
+            #{names.join(', ')}
+            #{result.join("\n")}
+            """.strip.gsub(/  +/, '')
+        end
     end
 end

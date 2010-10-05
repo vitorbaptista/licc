@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'trollop'
 require 'licc/license'
+require 'licc/licenses'
 
 module Licc
     class CLI
@@ -8,9 +9,9 @@ module Licc
 
         def self.execute(stdout=STDOUT, stdin=STDIN, arguments=[])
             opts = parse!(arguments)
-            licenses = parse_licenses(opts[:licenses])
+            licenses = Licenses.new(parse_licenses(opts[:licenses]))
 
-            puts licenses.first if licenses.length == 1
+            puts licenses if not opts[:to]
         end
 
         def self.parse!(arguments)

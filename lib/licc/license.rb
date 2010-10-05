@@ -98,10 +98,12 @@ module Licc
             @requires.include? 'ShareAlike'
         end
 
-        def and(other)
-            {'permits' => @permits & other.permits,
-                'requires' => @requires | other.requires,
-                'prohibits' => @prohibits | other.prohibits}
+        def +(other)
+            permits = @permits & other.permits
+            requires = @requires | other.requires
+            prohibits = @prohibits | other.prohibits
+
+            License.new('Combination', '', permits, requires, prohibits)
         end
     end
 end
