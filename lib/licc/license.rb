@@ -98,6 +98,11 @@ module Licc
             @requires.include? 'ShareAlike'
         end
 
+        def permissive?
+            not (copyleft? or lesser_copyleft? or sharealike?) and
+            (@permits <=> ['DerivativeWorks', 'Distribution', 'Reproduction']) >= 0
+        end
+
         def +(other)
             permits = @permits & other.permits
             requires = @requires | other.requires
