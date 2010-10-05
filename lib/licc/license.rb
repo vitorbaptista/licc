@@ -71,19 +71,19 @@ module Licc
             # OK if any of these is ShareAlike and they have the same
             # identifier (the version doesn't matters)
             return true if (self.sharealike? or other.sharealike?) and
-            other.identifier == self.identifier
+                            other.identifier == self.identifier
 
             # FAIL if both are Copyleft or Lesser Copyleft or ShareAlike (and
             # haven't been found compatible in the last steps)
             return false if (self.copyleft? or
                              self.lesser_copyleft? or
                              self.sharealike?) and
-                             (other.copyleft? or
-                              other.lesser_copyleft? or
-                              other.sharealike?)
+                            (other.copyleft? or
+                             other.lesser_copyleft? or
+                             other.sharealike?)
 
-                              # OK if neither is Copyleft/Lesser Copyleft/ShareAlike
-                              true
+            # OK if neither is Copyleft/Lesser Copyleft/ShareAlike
+            true
         end
 
         def copyleft?
