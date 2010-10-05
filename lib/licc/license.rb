@@ -36,7 +36,7 @@ module Licc
                 end
             end
 
-           License.new(identifier, version, permits, requires, prohibits)
+            License.new(identifier, version, permits, requires, prohibits)
         end
 
         def initialize(identifier, version, permits, requires, prohibits)
@@ -61,47 +61,47 @@ module Licc
         end
 
         def ==(other)
-          self.to_s == other.to_s
+            self.to_s == other.to_s
         end
 
         def combinable_with?(other)
-          # OK if they're the same
-          return true if self == other
+            # OK if they're the same
+            return true if self == other
 
-          # OK if any of these is ShareAlike and they have the same
-          # identifier (the version doesn't matters)
-          return true if (self.sharealike? or other.sharealike?) and
-                         other.identifier == self.identifier
+            # OK if any of these is ShareAlike and they have the same
+            # identifier (the version doesn't matters)
+            return true if (self.sharealike? or other.sharealike?) and
+            other.identifier == self.identifier
 
-          # FAIL if both are Copyleft or Lesser Copyleft or ShareAlike (and
-          # haven't been found compatible in the last steps)
-          return false if (self.copyleft? or
-                           self.lesser_copyleft? or
-                           self.sharealike?) and
-                          (other.copyleft? or
-                           other.lesser_copyleft? or
-                           other.sharealike?)
+            # FAIL if both are Copyleft or Lesser Copyleft or ShareAlike (and
+            # haven't been found compatible in the last steps)
+            return false if (self.copyleft? or
+                             self.lesser_copyleft? or
+                             self.sharealike?) and
+                             (other.copyleft? or
+                              other.lesser_copyleft? or
+                              other.sharealike?)
 
-          # OK if neither is Copyleft/Lesser Copyleft/ShareAlike
-          true
+                              # OK if neither is Copyleft/Lesser Copyleft/ShareAlike
+                              true
         end
 
         def copyleft?
-          @requires.include? 'Copyleft'
+            @requires.include? 'Copyleft'
         end
 
         def lesser_copyleft?
-          @requires.include? 'LesserCopyleft'
+            @requires.include? 'LesserCopyleft'
         end
 
         def sharealike?
-          @requires.include? 'ShareAlike'
+            @requires.include? 'ShareAlike'
         end
 
         def and(other)
             {'permits' => @permits & other.permits,
-             'requires' => @requires | other.requires,
-             'prohibits' => @prohibits | other.prohibits}
+                'requires' => @requires | other.requires,
+                'prohibits' => @prohibits | other.prohibits}
         end
     end
 end
