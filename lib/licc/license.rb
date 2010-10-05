@@ -1,69 +1,69 @@
 require 'rubygems'
 require 'rdf/raptor'
 
-class License
-    attr_reader :identifier, :version, :permits, :requires, :prohibits
+module Licc
+    class License
+        attr_reader :identifier, :version, :permits, :requires, :prohibits
 
-    CC = 'http://creativecommons.org/ns#'
-    CC_PERMITS = CC + 'permits'
-    CC_REQUIRES = CC + 'requires'
-    CC_PROHIBITS = CC + 'prohibits'
+        CC = 'http://creativecommons.org/ns#'
+        CC_PERMITS = CC + 'permits'
+        CC_REQUIRES = CC + 'requires'
+        CC_PROHIBITS = CC + 'prohibits'
 
-    DC = 'http://purl.org/dc/elements/1.1/'
-    DCQ = 'http://purl.org/dc/terms/'
+        DC = 'http://purl.org/dc/elements/1.1/'
+        DCQ = 'http://purl.org/dc/terms/'
 
-    def self.parse(rdf_uri)
-        permits = []
-        requires = []
-        prohibits = []
-        identifier = ''
-        version = ''
+        def self.parse(rdf_uri)
+            permits = []
+            requires = []
+            prohibits = []
+            identifier = ''
+            version = ''
 
-        RDF::Reader.open(rdf_uri) do |reader|
-            reader.each_statement do |s|
-                object = s.object.to_s.gsub(CC, '').gsub(DC, '')
-                predicate = s.predicate.to_s
+            RDF::Reader.open(rdf_uri) do |reader|
+                reader.each_statement do |s|
+                    object = s.object.to_s.gsub(CC, '').gsub(DC, '')
+                    predicate = s.predicate.to_s
 
-                # CC's licenses use DC, FSF's use DCQ. We test both.
-                identifier = object if predicate == DC + 'identifier'
-                identifier = object if predicate == DCQ + 'identifier'
+                    # CC's licenses use DC, FSF's use DCQ. We test both.
+                    identifier = object if predicate == DC + 'identifier'
+                    identifier = object if predicate == DCQ + 'identifier'
 
-                version = object    if predicate == DCQ + 'hasVersion'
-                permits << object   if predicate == CC_PERMITS
-                requires << object  if predicate == CC_REQUIRES
-                prohibits << object if predicate == CC_PROHIBITS
+                    version = object    if predicate == DCQ + 'hasVersion'
+                    permits << object   if predicate == CC_PERMITS
+                    requires << object  if predicate == CC_REQUIRES
+                    prohibits << object if predicate == CC_PROHIBITS
+                end
             end
+
+           License.new(identifier, version, permits, requires, prohibits)
         end
 
-        permits.sort!
-        requires.sort!
-        prohibits.sort!
-        identifier.upcase!
+        def initialize(identifier, version, permits, requires, prohibits)
+            @identifier, @version = identifier.upcase, version
 
-        License.new(identifier, version, permits, requires, prohibits)
-    end
+            @permits = permits.sort
+            @requires = requires.sort
+            @prohibits = prohibits.sort
+        end
 
-    def initialize(identifier, version, permits, requires, prohibits)
-        @identifier, @version = identifier, version
-        @permits, @requires, @prohibits = permits, requires, prohibits
-    end
+        def to_s
+            permits = @permits.join(', ') if not @permits.empty?
+            requires = @requires.join(', ') if not @requires.empty?
+            prohibits = @prohibits.join(', ') if not @prohibits.empty?
 
-    def to_s
-        permits = @permits.join(', ') if not @permits.empty?
-        requires = @requires.join(', ') if not @requires.empty?
-        prohibits = @prohibits.join(', ') if not @prohibits.empty?
+            """
+            #{@identifier} #{@version}
+            Permits: #{permits || '---'}
+            Requires: #{requires || '---'}
+            Prohibits: #{prohibits || '---'}
+            """.strip.gsub(/  +/, '')
+        end
 
-        """
-        #{@identifier} #{@version}
-        Permits: #{permits || '---'}
-        Requires: #{requires || '---'}
-        Prohibits: #{prohibits || '---'}
-        """.strip.gsub(/  +/, '')
-    end
-
-    def and(other)
-        {'permits' => @permits & other.permits,
-         'requires' => @requires | other.requires,
-         'prohibits' => @prohibits | other.prohibits}
+        def and(other)
+            {'permits' => @permits & other.permits,
+             'requires' => @requires | other.requires,
+             'prohibits' => @prohibits | other.prohibits}
+        end
     end
 end
