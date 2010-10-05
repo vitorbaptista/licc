@@ -8,19 +8,9 @@ module Licc
 
         def self.execute(stdout=STDOUT, stdin=STDIN, arguments=[])
             opts = parse!(arguments)
+            licenses = parse_licenses(opts[:licenses])
 
-            opts[:licenses].each { |license|
-                license_path = license
-                if not File.exists? license_path
-                    license_path = LICENSES_FOLDER + license.downcase + '.rdf'
-                end
-                if File.exists? license_path
-                    puts License.parse(license_path)
-                else
-                    puts "Unknown license \"#{license}\""
-                    exit -1
-                end
-            }
+            puts licenses.first if licenses.length == 1
         end
 
         def self.parse!(arguments)
@@ -32,6 +22,24 @@ module Licc
             opts[:licenses] = arguments
 
             opts
+        end
+
+        def self.parse_licenses(licenses)
+            result = Array.new
+            licenses.each { |license|
+                license_path = license
+                if not File.exists? license_path
+                    license_path = LICENSES_FOLDER + license.downcase + '.rdf'
+                end
+                if File.exists? license_path
+                    result << License.parse(license_path)
+                else
+                    puts "Unknown license \"#{license}\""
+                    exit -1
+                end
+            }
+
+            result
         end
     end
 end
