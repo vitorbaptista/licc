@@ -34,24 +34,9 @@ module Licc
         end
 
         def relicensable_to?(other)
-            combinable = Licenses.new(@licenses + [other]).combinable?
-            return false if not combinable
-
-            # Get all non-permissive licenses.
-            non_permissives = @licenses.select { |lic|
-                lic.copyleft? or lic.lesser_copyleft? or lic.sharealike?
-            }
-
             # Tests if each license is relicensable to our target license.
-            non_permissives.each { |lic|
-                if lic.sharealike? and other.sharealike?
-                    # If both are sharealike, they need to have the same
-                    # identifier (version don't matters).
-                    return false if lic.identifier != other.identifier
-                else
-                    # Otherwise they need to be the same (version matters).
-                    return false if lic != other
-                end
+            @licenses.each { |lic|
+                return false if not lic.relicensable_to? other
             }
 
             true

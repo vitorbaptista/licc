@@ -81,8 +81,26 @@ module Licc
                              other.sharealike?)
 
             # OK if neither is Copyleft nor ShareAlike. I consider that Lesser
-            # Copyleft licenses are combinable, but it depends on how they're 
+            # Copyleft licenses are combinable, but it depends on how they're
             # combined. We probably should give a warning if this is the case.
+            true
+        end
+
+        def relicensable_to?(other)
+            return false if not combinable_with? other
+
+            # OK if this is a permissive license
+            return true if self.permissive?
+
+            if self.sharealike? and other.sharealike?
+                # If both are ShareAlike, they have to have the same identifier
+                # (version don't matters).
+                return false if self.identifier != other.identifier
+            else
+                # Otherwise they need to be the same (version matters).
+                return false if self != other
+            end
+
             true
         end
 
