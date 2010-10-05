@@ -17,6 +17,12 @@ describe Licc::Licenses do
     l.licenses.should == licenses
   end
 
+  it "should ignore repeated licenses in the array it was initialized with" do
+    licenses = [@gpl, @bsd]
+    l = Licc::Licenses.new(licenses + licenses)
+    l.licenses.should == licenses
+  end
+
   it "should accept Licenses + License" do
     licenses = [@gpl, @bsd]
     l = Licc::Licenses.new(licenses)

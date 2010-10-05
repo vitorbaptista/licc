@@ -6,7 +6,7 @@ module Licc
     attr_accessor :licenses
 
     def initialize(licenses)
-      @licenses = licenses.dup
+      @licenses = licenses.uniq
     end
 
     def +(other)
