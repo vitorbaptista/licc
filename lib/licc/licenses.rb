@@ -33,6 +33,34 @@ module Licc
             true
         end
 
+        def relicensable_to?(other)
+            combinable = Licenses.new(@licenses + [other]).combinable?
+            return false if not combinable
+
+            # Look for the non-permissive license. There'll be only one,
+            # because if there were more, they wouldn't be combinable, and the
+            # program wouldn't reach this point (This will change when we
+            # correct the combination for Lesser Copyleft licenses)
+            non_permissive = @licenses.select { |lic|
+                lic.copyleft? or lic.lesser_copyleft? or lic.sharealike?
+            }.first
+
+            # OK if there are no non-permissive licenses
+            return true if non_permissive.nil?
+
+            # OK if the non-permissive license is ShareAlike and is the same as
+            # we're trying to license into (version don't matters).
+            return true if non_permissive.sharealike? and
+                           non_permissive.identifier == other.identifier
+
+            # OK if we're trying to relicense in the same license (version
+            # matters).
+            return true if non_permissive == other
+
+            # FALSE otherwise.
+            return false if not non_permissive.include? other
+        end
+
         def +(other)
             if other.respond_to? "licenses"
                 @licenses |= other.licenses

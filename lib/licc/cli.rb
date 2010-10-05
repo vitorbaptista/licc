@@ -10,8 +10,13 @@ module Licc
         def self.execute(stdout=STDOUT, stdin=STDIN, arguments=[])
             opts = parse!(arguments)
             licenses = Licenses.new(parse_licenses(opts[:licenses]))
-
-            puts licenses if not opts[:to]
+            if opts[:to]
+                to = parse_licenses(opts[:to]).first
+                result = licenses.relicensable_to? to
+                exit -1 if not licenses.relicensable_to? to
+            else
+                puts licenses if not opts[:to]
+            end
         end
 
         def self.parse!(arguments)
