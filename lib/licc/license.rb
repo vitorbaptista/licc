@@ -89,6 +89,13 @@ module Licc
         def relicensable_to?(other)
             return false if not combinable_with? other
 
+            # OK if they're the same
+            return true if self == other
+
+            # You can't change the license of something that you can't make
+            # derivative works of.
+            return false if not self.permits.include? 'DerivativeWorks'
+
             # The target license can remove permissions, but not add.
             other.permits.each { |permission|
                 return false if not self.permits.include? permission
