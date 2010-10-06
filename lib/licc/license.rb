@@ -89,6 +89,21 @@ module Licc
         def relicensable_to?(other)
             return false if not combinable_with? other
 
+            # The target license can remove permissions, but not add.
+            other.permits.each { |permission|
+                return false if not self.permits.include? permission
+            }
+
+            # The target license can add requirements, but not remove.
+            self.requires.each { |requirement|
+                return false if not other.requires.include? requirement
+            }
+
+            # The target license can add prohibitions, but not remove.
+            self.prohibits.each { |prohibition|
+                return false if not other.prohibits.include? prohibition
+            }
+
             # OK if this is a permissive license
             return true if self.permissive?
 

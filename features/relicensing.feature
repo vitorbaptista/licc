@@ -18,3 +18,15 @@ Feature: Relicensing
         Scenario: Is GPL relicensable to GPL?
             Given I run local executable "licc" with arguments "gpl --to gpl"
             Then it should exit successfully
+
+        Scenario: Is BY-NC relicensable to BY?
+            Given I run local executable "licc" with arguments "by-nc --to by"
+            Then it should not exit successfully
+
+        Scenario: Is BY-ND relicensable to BY?
+            Given I run local executable "licc" with arguments "by-nd --to by"
+            Then it should not exit successfully
+
+        Scenario: Is BY-NC-ND relicensable to BY?
+            Given I run local executable "licc" with arguments "by-nc-nd --to by"
+            Then it should not exit successfully
