@@ -4,13 +4,7 @@ require 'licc/licenses'
 
 describe Licc::Licenses do
     before(:all) do
-        permissions = ['DerivativeWorks', 'Distribution', 'Reproduction']
-        gpl_requirements = ['Copyleft', 'Notice', 'SourceCode']
-        by_sa_requirements = ['Attribution', 'Notice', 'ShareAlike']
-        @gpl = Licc::License.new('GPL', '3.0', permissions, gpl_requirements, [])
-        @bsd = Licc::License.new('BSD', '', permissions, ['Notice'], [])
-        @by  = Licc::License.new('BY', '3.0', permissions, ['Attribution', 'Notice'], [])
-        @by_sa  = Licc::License.new('BY-SA', '3.0', permissions, by_sa_requirements, [])
+        initialize_licenses
     end
 
     it "should accept an array of licenses" do
