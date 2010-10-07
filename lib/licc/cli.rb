@@ -15,7 +15,7 @@ module Licc
                 result = licenses.relicensable_to? to
                 exit -1 if not licenses.relicensable_to? to
             else
-                puts licenses if not opts[:to]
+                puts licenses
             end
         end
 
