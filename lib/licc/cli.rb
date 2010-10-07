@@ -14,7 +14,6 @@ module Licc
             licenses = Licenses.new(parse_licenses(opts[:licenses]))
             if opts[:to]
                 to = parse_licenses(opts[:to]).first
-                result = licenses.relicensable_to? to
                 exit -1 if not licenses.relicensable_to? to
             else
                 @stdout.puts licenses

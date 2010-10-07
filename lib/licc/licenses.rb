@@ -54,7 +54,7 @@ module Licc
 
         def to_s
             exit -1 if not combinable?
-            
+
             combination = licenses.first
             names = []
             licenses.each { |license|
