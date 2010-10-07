@@ -24,4 +24,20 @@ describe Licc::License do
            }
         }
     end
+
+    it "should be combinable with itself" do
+        licenses = [@gpl, @lgpl, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa]
+
+        licenses.each { |license|
+            license.combinable_with?(license).should == true
+        }
+    end
+
+    it "should be relicensable to itself" do
+        licenses = [@gpl, @lgpl, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa]
+
+        licenses.each { |license|
+            license.relicensable_to?(license).should == true
+        }
+    end
 end
