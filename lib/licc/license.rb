@@ -73,12 +73,16 @@ module Licc
             return true if (self.sharealike? or other.sharealike?) and
                             other.identifier == self.identifier
 
-            # FAIL if both are Copyleft or Lesser Copyleft or ShareAlike (and
-            # haven't been found compatible in the last steps)
+            # FAIL if both are Copyleft or ShareAlike
             return false if (self.copyleft? or
                              self.sharealike?) and
                             (other.copyleft? or
                              other.sharealike?)
+
+            # Lesser Copyleft isn't combinable with Copyleft or ShareAlike
+            # licenses
+            return false if (self.lesser_copyleft? and (other.copyleft? or other.sharealike?)) or
+                            (other.lesser_copyleft? and (self.copyleft? or self.sharealike?)) 
 
             # OK if neither is Copyleft nor ShareAlike. I consider that Lesser
             # Copyleft licenses are combinable, but it depends on how they're
