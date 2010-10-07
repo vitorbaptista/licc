@@ -25,6 +25,17 @@ describe Licc::License do
         }
     end
 
+    it "should give the same result indepent of combination order" do
+        licenses = [@gpl, @lgpl, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa]
+
+        (licenses.length - 1).times { |i|
+            origin = licenses[i]
+            target = licenses[i+1]
+
+            origin.combinable_with?(target).should == target.combinable_with?(origin)
+        }
+    end
+
     it "should be combinable with itself" do
         licenses = [@gpl, @lgpl, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa]
 
