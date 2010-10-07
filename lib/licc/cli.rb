@@ -8,6 +8,8 @@ module Licc
         LICENSES_FOLDER = File.dirname(__FILE__) + '/licenses/'
 
         def self.execute(stdout=STDOUT, stdin=STDIN, arguments=[])
+            @stdout, @stdin = stdout, stdin
+
             opts = parse!(arguments)
             licenses = Licenses.new(parse_licenses(opts[:licenses]))
             if opts[:to]
@@ -15,7 +17,7 @@ module Licc
                 result = licenses.relicensable_to? to
                 exit -1 if not licenses.relicensable_to? to
             else
-                puts licenses
+                @stdout.puts licenses
             end
         end
 
@@ -40,7 +42,7 @@ module Licc
                 if File.exists? license_path
                     result << License.parse(license_path)
                 else
-                    puts "Unknown license \"#{license}\""
+                    @stdout.puts "Unknown license \"#{license}\""
                     exit -1
                 end
             }
