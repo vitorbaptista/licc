@@ -23,6 +23,8 @@ def initialize_licenses
     @lgpl = Licc::License.new('LGPL', '2.1', permissions, lgpl_requirements, [])
     @bsd = Licc::License.new('BSD', '', permissions, ['Notice'], [])
 
+    @cc0  = Licc::License.new('CC0', '1.0', permissions, [], [])
+
     @by  = Licc::License.new('BY', '3.0', permissions, by_requirements, [])
     @by_sa  = Licc::License.new('BY-SA', '3.0', permissions, by_sa_requirements, [])
     @by_nd  = Licc::License.new('BY-ND', '3.0', by_nd_permissions, by_requirements, [])

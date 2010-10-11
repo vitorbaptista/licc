@@ -7,8 +7,9 @@ describe Licc::License do
     end
 
     it "should be relicensable to other licenses according to CC's Compatibility Chart" do
-        origins = [@by, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa]
-        targets = [[@by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa],
+        origins = [@cc0, @by, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa]
+        targets = [origins,
+                   [@by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa],
                    [@by_nc_nd, @by_nc_sa]]
 
         origins.each_with_index { |origin, index|
@@ -26,7 +27,7 @@ describe Licc::License do
     end
 
     it "should give the same result indepent of combination order" do
-        licenses = [@gpl, @lgpl, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa]
+        licenses = [@gpl, @lgpl, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa, @cc0]
 
         (licenses.length - 1).times { |i|
             origin = licenses[i]
@@ -37,7 +38,7 @@ describe Licc::License do
     end
 
     it "should be combinable with itself" do
-        licenses = [@gpl, @lgpl, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa]
+        licenses = [@gpl, @lgpl, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa, @cc0]
 
         licenses.each { |license|
             license.combinable_with?(license).should == true
@@ -45,7 +46,7 @@ describe Licc::License do
     end
 
     it "should be relicensable to itself" do
-        licenses = [@gpl, @lgpl, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa]
+        licenses = [@gpl, @lgpl, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa, @cc0]
 
         licenses.each { |license|
             license.relicensable_to?(license).should == true
