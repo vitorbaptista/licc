@@ -68,9 +68,9 @@ module Licc
             # OK if they're the same
             return true if self == other
 
-            # OK if any of these is ShareAlike and they have the same
-            # identifier (the version doesn't matters)
-            return true if (self.sharealike? or other.sharealike?) and
+            # OK if both are ShareAlike and have the same identifier
+            # (the version don't matters)
+            return true if (self.sharealike? and other.sharealike?) and
                             other.identifier == self.identifier
 
             # FAIL if both are Copyleft or ShareAlike
@@ -82,7 +82,7 @@ module Licc
             # Lesser Copyleft isn't combinable with Copyleft or ShareAlike
             # licenses
             return false if (self.lesser_copyleft? and (other.copyleft? or other.sharealike?)) or
-                            (other.lesser_copyleft? and (self.copyleft? or self.sharealike?)) 
+                            (other.lesser_copyleft? and (self.copyleft? or self.sharealike?))
 
             # OK if neither is Copyleft nor ShareAlike. I consider that Lesser
             # Copyleft licenses are combinable, but it depends on how they're
@@ -91,10 +91,11 @@ module Licc
         end
 
         def relicensable_to?(other)
-            return false if not combinable_with? other
-
             # OK if they're the same
             return true if self == other
+
+            # They need to be combinable, but it's not enough.
+            return false if not combinable_with? other
 
             # You can't change the license of something that you can't make
             # derivative works of.
