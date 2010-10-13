@@ -14,6 +14,7 @@ describe Licc::License do
 
         origins.each_with_index { |origin, index|
            relicensable = targets.fetch(index, []) + [origin]
+           relicensable = [] if not origin.permits.include? 'DerivativeWorks'
            unrelicensable = origins - relicensable
 
            relicensable.each { |license|
@@ -53,6 +54,7 @@ describe Licc::License do
 
         cc.each_with_index { |origin, index|
            relicensable = targets.fetch(index, []) + [origin]
+           relicensable = [] if not origin.permits.include? 'DerivativeWorks'
            unrelicensable = gnu - relicensable
 
            relicensable.each { |license|
@@ -68,16 +70,19 @@ describe Licc::License do
     it "should be combinable with known compatible licenses" do
         cc = [@cc0, @by, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa]
         gnu = [@gpl, @lgpl, @gpl3]
-        all = cc + gnu
+
+        non_derivatives = [@by_nd, @by_nc_nd]
+        all = cc + gnu - non_derivatives
 
         origins = [@cc0, @by, @by_nc, @lgpl]
         targets = [all,
                    all - [@gpl, @gpl3],
-                   [@cc0, @by, @by_nc, @by_nc_sa],
+                   [@cc0, @by, @by_nc, @by_nc_sa, @lgpl],
                    all - [@by_sa, @by_nc_sa]]
 
         origins.each_with_index { |origin, index|
            relicensable = targets.fetch(index, []) + [origin]
+           relicensable = [] if not origin.permits.include? 'DerivativeWorks'
            unrelicensable = all - relicensable
 
            relicensable.each { |license|
@@ -90,7 +95,6 @@ describe Licc::License do
         }
     end
 
-
     it "should give the same result indepent of combination order" do
         licenses = [@gpl, @lgpl, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa, @cc0]
 
@@ -102,19 +106,21 @@ describe Licc::License do
         }
     end
 
-    it "should be combinable with itself" do
+    it "should be combinable with itself (except non_derivatives)" do
         licenses = [@gpl, @lgpl, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa, @cc0]
-
+ 
         licenses.each { |license|
-            license.combinable_with?(license).should == true
+            permits_derivatives = license.permits.include? 'DerivativeWorks'
+            license.combinable_with?(license).should == permits_derivatives
         }
     end
 
-    it "should be relicensable to itself" do
+    it "should be relicensable to itself (except non_derivatives)" do
         licenses = [@gpl, @lgpl, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa, @cc0]
 
         licenses.each { |license|
-            license.relicensable_to?(license).should == true
+            permits_derivatives = license.permits.include? 'DerivativeWorks'
+            license.relicensable_to?(license).should == permits_derivatives
         }
     end
 end
