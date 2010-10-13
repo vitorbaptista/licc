@@ -19,7 +19,8 @@ def initialize_licenses
     by_nd_permissions = permissions - ['DerivativeWorks']
     non_commercial = ['CommercialUse']
 
-    @gpl = Licc::License.new('GPL', '3.0', permissions, gpl_requirements, [])
+    @gpl = Licc::License.new('GPL', '2.0', permissions, gpl_requirements, [])
+    @gpl3 = Licc::License.new('GPL', '3.0', permissions, gpl_requirements, [])
     @lgpl = Licc::License.new('LGPL', '2.1', permissions, lgpl_requirements, [])
     @bsd = Licc::License.new('BSD', '', permissions, ['Notice'], [])
 
