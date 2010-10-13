@@ -54,7 +54,7 @@ describe Licc::Licenses do
     end
 
     it "should detect known combinable license as such" do
-        licenses = [@gpl, @bsd, @by]
+        licenses = [@gpl, @bsd]
         l = Licc::Licenses.new(licenses)
         l.combinable?.should == true
     end

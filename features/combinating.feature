@@ -4,13 +4,13 @@ Feature: Combinating
     So I can know if I am complying with the other developer's licenses.
 
     Scenario: Combinating compatible licenses
-        Given I run local executable "licc" with arguments "bsd by gpl"
+        Given I run local executable "licc" with arguments "bsd gpl"
         Then it should exit successfully
         Then I should see
         """
-        BSD, BY 3.0, GNU GPL 2.0
+        BSD, GNU GPL 2.0
         Permits: DerivativeWorks, Distribution, Reproduction
-        Requires: Attribution, Copyleft, Notice, SourceCode
+        Requires: Copyleft, Notice, SourceCode
         Prohibits: ---
         """
 
