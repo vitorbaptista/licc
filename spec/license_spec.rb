@@ -81,6 +81,7 @@ describe Licc::License do
                    all - [@by_sa, @by_nc_sa]]
 
         origins.each_with_index { |origin, index|
+           pending("extend ccREL to describe relicensing exceptions") if origin == @lgpl
            relicensable = targets.fetch(index, []) + [origin]
            relicensable = [] if not origin.permits.include? 'DerivativeWorks'
            unrelicensable = all - relicensable
@@ -108,7 +109,7 @@ describe Licc::License do
 
     it "should be combinable with itself (except non_derivatives)" do
         licenses = [@gpl, @lgpl, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa, @cc0]
- 
+
         licenses.each { |license|
             permits_derivatives = license.permits.include? 'DerivativeWorks'
             license.combinable_with?(license).should == permits_derivatives
