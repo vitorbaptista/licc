@@ -26,6 +26,26 @@ describe Licc::License do
         }
     end
 
+    it "should be relicensable to other licenses according to GNU Project's Compatibility Matrix" do
+        pending("extend ccREL to describe relicensing exceptions")
+
+        origins = [@lgpl, @gpl, @gpl3]
+        targets = [[@gpl, @gpl3]]
+
+        origins.each_with_index { |origin, index|
+           relicensable = targets.fetch(index, []) + [origin]
+           unrelicensable = origins - relicensable
+
+           relicensable.each { |license|
+               origin.relicensable_to?(license).should == true
+           }
+
+           unrelicensable.each { |license|
+               origin.relicensable_to?(license).should == false
+           }
+        }
+    end
+
     it "should give the same result indepent of combination order" do
         licenses = [@gpl, @lgpl, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa, @cc0]
 
