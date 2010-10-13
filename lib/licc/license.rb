@@ -65,68 +65,50 @@ module Licc
         end
 
         def combinable_with?(other)
-            # OK if they're the same
-            return true if self == other
+            # You can't combine with something that you can't make
+            # derivative works of.
+            if not (permits.include? 'DerivativeWorks' and other.permits.include? 'DerivativeWorks')
+                return false
+            end
 
-            # OK if both are ShareAlike and have the same identifier
-            # (the version don't matters)
-            return true if (self.sharealike? and other.sharealike?) and
-                            other.identifier == self.identifier
+            # If any of the licenses is Copyleft or ShareAlike, being
+            # combinable is the same as being relicensable. We just check if
+            # any of the licenses is relicensable into the other.
+            if (copyleft? or sharealike?) or
+               (other.copyleft? or other.sharealike?)
+                return (relicensable_to?(other) or other.relicensable_to?(self))
+            end
 
-            # FAIL if both are Copyleft or ShareAlike
-            return false if (self.copyleft? or
-                             self.sharealike?) and
-                            (other.copyleft? or
-                             other.sharealike?)
-
-            # Lesser Copyleft isn't combinable with Copyleft or ShareAlike
-            # licenses
-            return false if (self.lesser_copyleft? and (other.copyleft? or other.sharealike?)) or
-                            (other.lesser_copyleft? and (self.copyleft? or self.sharealike?))
-
-            # OK if neither is Copyleft nor ShareAlike. I consider that Lesser
-            # Copyleft licenses are combinable, but it depends on how they're
-            # combined. We probably should give a warning if this is the case.
             true
         end
 
         def relicensable_to?(other)
-            # OK if they're the same
-            return true if self == other
-
-            # They need to be combinable, but it's not enough.
-            return false if not combinable_with? other
-
             # You can't change the license of something that you can't make
             # derivative works of.
-            return false if not self.permits.include? 'DerivativeWorks'
+            return false if not permits.include? 'DerivativeWorks'
+
+            # If I am Copyleft or Lesser Copyleft, I can only relicense to the
+            # same license (version matters).
+            return self == other if copyleft? or lesser_copyleft?
+
+            # If I am ShareAlike, I can only relicense to the same license,
+            # independent of which version.
+            return identifier == other.identifier if sharealike?
 
             # The target license can remove permissions, but not add.
             other.permits.each { |permission|
-                return false if not self.permits.include? permission
+                return false if not permits.include? permission
             }
 
             # The target license can add requirements, but not remove.
-            self.requires.each { |requirement|
+            requires.each { |requirement|
                 return false if not other.requires.include? requirement
             }
 
             # The target license can add prohibitions, but not remove.
-            self.prohibits.each { |prohibition|
+            prohibits.each { |prohibition|
                 return false if not other.prohibits.include? prohibition
             }
-
-            # OK if this is a permissive license
-            return true if self.permissive?
-
-            if self.sharealike? and other.sharealike?
-                # If both are ShareAlike, they have to have the same identifier
-                # (version don't matters).
-                return false if self.identifier != other.identifier
-            else
-                # Otherwise they need to be the same (version matters).
-                return false if self != other
-            end
 
             true
         end
