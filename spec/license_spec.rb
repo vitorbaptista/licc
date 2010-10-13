@@ -46,6 +46,25 @@ describe Licc::License do
         }
     end
 
+    it "should be relicensable to known compatible licenses" do
+        cc = [@cc0, @by, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa]
+        gnu = [@gpl, @lgpl, @gpl3]
+        targets = [cc + gnu]
+
+        cc.each_with_index { |origin, index|
+           relicensable = targets.fetch(index, []) + [origin]
+           unrelicensable = gnu - relicensable
+
+           relicensable.each { |license|
+               origin.relicensable_to?(license).should == true
+           }
+
+           unrelicensable.each { |license|
+               origin.relicensable_to?(license).should == false
+           }
+        }
+    end
+
     it "should give the same result indepent of combination order" do
         licenses = [@gpl, @lgpl, @by_nc, @by_nc_nd, @by_nc_sa, @by_nd, @by_sa, @cc0]
 
