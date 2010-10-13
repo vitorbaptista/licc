@@ -1,9 +1,9 @@
-Feature: Combinating
+Feature: Combining
     As a developer of a project with many licenses
     I want to know if I can combine those licenses
-    So I can know if I am complying with the other developer's licenses.
+    So I can know if I am complying with the other developers' licenses.
 
-    Scenario: Combinating compatible licenses
+    Scenario: Combining compatible licenses
         Given I run local executable "licc" with arguments "bsd gpl"
         Then it should exit successfully
         Then I should see
@@ -14,6 +14,6 @@ Feature: Combinating
         Prohibits: ---
         """
 
-    Scenario: Combinating non-compatible licenses
+    Scenario: Combining non-compatible licenses
         Given I run local executable "licc" with arguments "gpl by-sa"
         Then it should not exit successfully
