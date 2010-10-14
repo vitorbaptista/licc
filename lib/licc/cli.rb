@@ -19,8 +19,18 @@ module Licc
             opts = parse!(arguments)
             licenses = Licenses.new(parse_licenses(opts[:licenses]))
             if opts[:to]
-                to = parse_licenses(opts[:to]).first
-                exit -1 if not licenses.relicensable_to? to
+                if opts[:to].upcase == 'ANY'
+                    relicensable_to = []
+                    @known_licenses.each_key { |license|
+                        license = parse_licenses(license).first
+                        relicensable_to << "#{license.identifier} #{license.version}" if licenses.relicensable_to? license
+                    }
+                    exit -1 if relicensable_to.empty?
+                    puts relicensable_to.join(', ')
+                else
+                    to = parse_licenses(opts[:to]).first
+                    exit -1 if not licenses.relicensable_to? to
+                end
             else
                 @stdout.puts licenses
             end
@@ -28,7 +38,7 @@ module Licc
 
         def self.parse!(arguments)
             opts = Trollop::options(arguments) do
-                opt :to, "Relicense to", :type => :string
+                opt :to, "Relicense to (use ANY to see all possibilities)", :type => :string
             end
 
             # We consider the remaining arguments as licenses
