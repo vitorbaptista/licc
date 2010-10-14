@@ -10,6 +10,12 @@ module Licc
         def self.execute(stdout=STDOUT, stdin=STDIN, arguments=[])
             @stdout, @stdin = stdout, stdin
 
+            @known_licenses = Hash.new
+            Dir.glob(LICENSES_FOLDER + '*.rdf').each { |path|
+                license = File.basename(path, '.rdf')
+                @known_licenses[license] = path
+            }
+
             opts = parse!(arguments)
             licenses = Licenses.new(parse_licenses(opts[:licenses]))
             if opts[:to]
@@ -31,12 +37,12 @@ module Licc
             opts
         end
 
-        def self.parse_licenses(licenses)
+        def self.parse_licenses(licenses, known_licenses=@known_licenses)
             result = Array.new
             licenses.each { |license|
                 license_path = license
-                if not File.exists? license_path
-                    license_path = LICENSES_FOLDER + license.downcase + '.rdf'
+                if known_licenses.has_key? license.downcase
+                    license_path = known_licenses[license.downcase]
                 end
                 if File.exists? license_path
                     result << License.parse(license_path)
