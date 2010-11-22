@@ -12,7 +12,7 @@ module Licc
 
             @known_licenses = Hash.new
             Dir.glob(LICENSES_FOLDER + '*.rdf').each { |path|
-                license = File.basename(path, '.rdf')
+                license = File.basename(path, '.rdf').upcase
                 @known_licenses[license] = path
             }
 
@@ -31,7 +31,9 @@ module Licc
                     to = parse_licenses(opts[:to]).first
                     exit -1 if not licenses.relicensable_to? to
                 end
-            else
+            elsif opts[:list_licenses]
+                @stdout.puts @known_licenses.keys.sort.join(', ')
+            elsif not opts[:licenses].empty?
                 @stdout.puts licenses
             end
         end
@@ -39,6 +41,7 @@ module Licc
         def self.parse!(arguments)
             opts = Trollop::options(arguments) do
                 opt :to, "Relicense to (use ANY to see all possibilities)", :type => :string
+                opt :list_licenses, "List all known licenses"
             end
 
             # We consider the remaining arguments as licenses
