@@ -54,8 +54,8 @@ module Licc
             result = Array.new
             licenses.each { |license|
                 license_path = license
-                if known_licenses.has_key? license.downcase
-                    license_path = known_licenses[license.downcase]
+                if known_licenses.has_key? license.upcase
+                    license_path = known_licenses[license.upcase]
                 end
                 if File.exists? license_path
                     result << License.parse(license_path)
