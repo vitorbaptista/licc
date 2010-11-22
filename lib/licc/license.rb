@@ -96,19 +96,13 @@ module Licc
             return identifier == other.identifier if sharealike?
 
             # The target license can remove permissions, but not add.
-            other.permits.each { |permission|
-                return false if not permits.include? permission
-            }
+            return false if permits | other.permits != permits
 
             # The target license can add requirements, but not remove.
-            requires.each { |requirement|
-                return false if not other.requires.include? requirement
-            }
+            return false if requires & other.requires != requires
 
             # The target license can add prohibitions, but not remove.
-            prohibits.each { |prohibition|
-                return false if not other.prohibits.include? prohibition
-            }
+            return false if prohibits & other.prohibits != prohibits
 
             true
         end
