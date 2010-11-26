@@ -49,6 +49,8 @@ module Licc
                 @licenses |= [other]
             end
 
+            @licenses.uniq!
+
             self
         end
 
