@@ -125,6 +125,10 @@ module Licc
             (@permits <=> ['DerivativeWorks', 'Distribution', 'Reproduction']) >= 0
         end
 
+        def hereditary?
+            copyleft? or lesser_copyleft? or sharealike?
+        end
+
         def +(other)
             Licenses.new([self, other])
         end
