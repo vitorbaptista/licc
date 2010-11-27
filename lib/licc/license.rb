@@ -126,11 +126,7 @@ module Licc
         end
 
         def +(other)
-            permits = @permits & other.permits
-            requires = @requires | other.requires
-            prohibits = @prohibits | other.prohibits
-
-            License.new('Combination', '', permits, requires, prohibits)
+            Licenses.new([self, other])
         end
     end
 end
