@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'rdf/raptor'
+require 'licc/licensecompatibilityexception'
 
 module Licc
     class License
