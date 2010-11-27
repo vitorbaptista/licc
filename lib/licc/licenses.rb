@@ -65,21 +65,34 @@ module Licc
         end
 
         def to_s
-            exit -1 if not combinable?
-
-            combination = licenses.first
-            names = []
-            licenses.each { |license|
-                names << "#{license.identifier} #{license.version}".strip
-                combination += license
+            copyleft_or_sa = @licenses.find { |license|
+                license.copyleft? or license.sharealike?
             }
 
-            result = combination.to_s.split("\n")
-            result.shift
+            return copyleft_or_sa.to_s if copyleft_or_sa
+
+            permits = []
+            requires = []
+            prohibits = []
+            names = []
+
+            licenses.each { |license|
+                names << "#{license.identifier} #{license.version}".strip
+                permits = license.permits if permits.empty?
+                permits &= license.permits
+                requires |= license.requires
+                prohibits |= license.prohibits
+            }
+
+            permits = permits.join(', ') if not permits.empty?
+            requires = requires.join(', ') if not requires.empty?
+            prohibits = prohibits.join(', ') if not prohibits.empty?
 
             """
             #{names.join(', ')}
-            #{result.join("\n")}
+            Permits: #{permits || '---'}
+            Requires: #{requires || '---'}
+            Prohibits: #{prohibits || '---'}
             """.strip.gsub(/  +/, '')
         end
     end
