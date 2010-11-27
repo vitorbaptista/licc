@@ -65,11 +65,21 @@ module Licc
         end
 
         def to_s
-            copyleft_or_sa = @licenses.find { |license|
+            # If we have a Copyleft or a ShareAlike license, only print it.
+            copyleft_or_sa = @licenses.find_all { |license|
                 license.copyleft? or license.sharealike?
             }
 
-            return copyleft_or_sa.to_s if copyleft_or_sa
+            # But if there're more than one Copyleft or ShareAlike (most
+            # probably, if this is the case it's a ShareAlike license), we
+            # print the one with the newer version.
+            if newer_version = copyleft_or_sa.shift
+                copyleft_or_sa.each { |license|
+                    newer_version = license if license.version > newer_version.version
+                }
+
+                return newer_version.to_s
+            end
 
             permits = []
             requires = []
