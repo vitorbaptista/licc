@@ -3,13 +3,19 @@ require 'licc/license'
 
 module Licc
     class Licenses
-        attr_accessor :licenses
+        attr_reader :licenses
 
         def initialize(licenses)
             @licenses = licenses.uniq
+
+            combinable?
         end
 
         def combinable?
+            combinable_with? self
+        end
+
+        def combinable_with?(other)
             # Copyleft licenses are compatible if they're the same or if they're
             # explicitly compatible. We don't need to test if they're the same,
             # because we only have unique licenses. So we only test the latter.
@@ -23,10 +29,18 @@ module Licc
             # jurisdiction and, as in Copyleft, we already know that we have unique
             # versions. So, we only need to check if it's a new version of itself.
 
+            # If 'other' is also a Licenses, we test against each license it
+            # contains.
+            if other.respond_to? "licenses"
+                other.licenses.each { |license|
+                    @licenses |= [license] if combinable_with? license
+                }
+            end
+
             # Tests if each license is combinable with every other.
-            @licenses.each { |license|
+            (@licenses + [other]).each { |license|
                 (@licenses - [license]).each { |other|
-                    return false if not license.combinable_with? other
+                    raise LicenseCompatibilityException if not license.combinable_with? other
                 }
             }
 
@@ -43,13 +57,9 @@ module Licc
         end
 
         def +(other)
-            if other.respond_to? "licenses"
-                @licenses |= other.licenses
-            else
-                @licenses |= [other]
-            end
+            other = Licenses.new([other]) if not other.respond_to? "licenses"
 
-            @licenses.uniq!
+            combinable_with? other
 
             self
         end
