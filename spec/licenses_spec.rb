@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/spec_helper.rb'
 require 'licc/license'
 require 'licc/licenses'
-require 'licc/licensecompatibilityexception'
+require 'licc/license_compatibility_exception'
 
 describe Licc::Licenses do
     before(:all) do

@@ -2,6 +2,7 @@ require 'rubygems'
 require 'trollop'
 require 'licc/license'
 require 'licc/licenses'
+require 'licc/license_compatibility_exception'
 
 module Licc
     class CLI
