@@ -124,12 +124,12 @@ module Licc
             (@permits <=> ['DerivativeWorks', 'Distribution', 'Reproduction']) >= 0
         end
 
-        def +(other)
-            permits = @permits & other.permits
-            requires = @requires | other.requires
-            prohibits = @prohibits | other.prohibits
+        def hereditary?
+            copyleft? or lesser_copyleft? or sharealike?
+        end
 
-            License.new('Combination', '', permits, requires, prohibits)
+        def +(other)
+            Licenses.new([self, other])
         end
     end
 end

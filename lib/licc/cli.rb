@@ -2,6 +2,7 @@ require 'rubygems'
 require 'trollop'
 require 'licc/license'
 require 'licc/licenses'
+require 'licc/license_compatibility_exception'
 
 module Licc
     class CLI
@@ -17,7 +18,13 @@ module Licc
             }
 
             opts = parse!(arguments)
-            licenses = Licenses.new(parse_licenses(opts[:licenses]))
+
+            begin
+                licenses = Licenses.new(parse_licenses(opts[:licenses]))
+            rescue LicenseCompatibilityException
+                exit -1
+            end
+
             if opts[:to]
                 if opts[:to].upcase == 'ANY'
                     relicensable_to = []
