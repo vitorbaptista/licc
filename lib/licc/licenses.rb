@@ -8,7 +8,7 @@ module Licc
         def initialize(licenses)
             @licenses = licenses.uniq
 
-            combinable?
+            raise LicenseCompatibilityException if not combinable?
         end
 
         def combinable?
@@ -29,18 +29,17 @@ module Licc
             # jurisdiction and, as in Copyleft, we already know that we have unique
             # versions. So, we only need to check if it's a new version of itself.
 
-            # If 'other' is also a Licenses, we test against each license it
-            # contains.
-            if other.respond_to? "licenses"
-                other.licenses.each { |license|
-                    @licenses |= [license] if combinable_with? license
-                }
-            end
+            licenses = @licenses
+            licenses += if other.respond_to? "licenses"
+                            other.licenses
+                        else
+                            [other]
+                        end
 
             # Tests if each license is combinable with every other.
-            (@licenses + [other]).each { |license|
-                (@licenses - [license]).each { |other|
-                    raise LicenseCompatibilityException if not license.combinable_with? other
+            licenses.each { |license|
+                (licenses - [license]).each { |other|
+                    return false if not license.combinable_with? other
                 }
             }
 
@@ -49,8 +48,8 @@ module Licc
 
         def relicensable_to?(other)
             # Tests if each license is relicensable to our target license.
-            @licenses.each { |lic|
-                return false if not lic.relicensable_to? other
+            @licenses.each { |license|
+                return false if not license.relicensable_to? other
             }
 
             true
@@ -59,7 +58,8 @@ module Licc
         def +(other)
             other = Licenses.new([other]) if not other.respond_to? "licenses"
 
-            combinable_with? other
+            @licenses |= other.licenses if combinable_with? other
+            @licenses.uniq!
 
             self
         end
