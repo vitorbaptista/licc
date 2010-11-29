@@ -8,7 +8,7 @@ Feature: Combining
         Then it should exit successfully
         Then I should see
         """
-        BSD, GNU GPL 2.0
+        GNU GPL 2.0
         Permits: DerivativeWorks, Distribution, Reproduction
         Requires: Copyleft, Notice, SourceCode
         Prohibits: ---
