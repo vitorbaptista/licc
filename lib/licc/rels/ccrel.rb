@@ -50,6 +50,31 @@ module Licc
                 @prohibits = prohibits.sort
             end
 
+            def copyleft?
+                @requires.include? 'Copyleft'
+            end
+
+            def lesser_copyleft?
+                @requires.include? 'LesserCopyleft'
+            end
+
+            def sharealike?
+                @requires.include? 'ShareAlike'
+            end
+
+            def permissive?
+                not (copyleft? or lesser_copyleft? or sharealike?) and
+                (@permits <=> ['DerivativeWorks', 'Distribution', 'Reproduction']) >= 0
+            end
+
+            def +(other)
+                Licenses.new([self, other])
+            end
+
+            def ==(other)
+                self.to_s == other.to_s
+            end
+
             def to_s
                 permits = @permits.join(', ') if not @permits.empty?
                 requires = @requires.join(', ') if not @requires.empty?
@@ -61,10 +86,6 @@ module Licc
                 Requires: #{requires || '---'}
                 Prohibits: #{prohibits || '---'}
                 """.strip.gsub(/  +/, '')
-            end
-
-            def ==(other)
-                self.to_s == other.to_s
             end
 
             def combinable_with?(other)
@@ -108,31 +129,6 @@ module Licc
                 return false if prohibits & other.prohibits != prohibits
 
                 true
-            end
-
-            def copyleft?
-                @requires.include? 'Copyleft'
-            end
-
-            def lesser_copyleft?
-                @requires.include? 'LesserCopyleft'
-            end
-
-            def sharealike?
-                @requires.include? 'ShareAlike'
-            end
-
-            def permissive?
-                not (copyleft? or lesser_copyleft? or sharealike?) and
-                (@permits <=> ['DerivativeWorks', 'Distribution', 'Reproduction']) >= 0
-            end
-
-            def hereditary?
-                copyleft? or lesser_copyleft? or sharealike?
-            end
-
-            def +(other)
-                Licenses.new([self, other])
             end
         end
     end
