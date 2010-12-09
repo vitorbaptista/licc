@@ -57,10 +57,10 @@ module Licc
 
                 """
                 #{@identifier} #{@version}
-            Permits: #{permits || '---'}
-            Requires: #{requires || '---'}
-            Prohibits: #{prohibits || '---'}
-            """.strip.gsub(/  +/, '')
+                Permits: #{permits || '---'}
+                Requires: #{requires || '---'}
+                Prohibits: #{prohibits || '---'}
+                """.strip.gsub(/  +/, '')
             end
 
             def ==(other)
