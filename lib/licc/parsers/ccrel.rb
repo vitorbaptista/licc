@@ -11,8 +11,8 @@ module Licc
             CC_REQUIRES = CC + 'requires'
             CC_PROHIBITS = CC + 'prohibits'
 
-            DC = 'http://purl.org/DC/elements/1.1/'
-            DCQ = 'http://purl.org/DC/terms/'
+            DC = 'http://purl.org/dc/elements/1.1/'
+            DCQ = 'http://purl.org/dc/terms/'
 
             def self.parse(rdf_uri)
                 # Initializing variables that will hold the results.
