@@ -4,7 +4,8 @@ require 'rdf/raptor'
 module Licc
     module License
         class CCREL
-            attr_reader :identifier, :version, :permits, :requires, :prohibits
+            include License
+            attr_reader :permits, :requires, :prohibits
 
             def self.parse(rdf_uri)
                 # RDF predicates used by ccREL.
@@ -67,14 +68,6 @@ module Licc
                 (@permits <=> ['DerivativeWorks', 'Distribution', 'Reproduction']) >= 0
             end
 
-            def +(other)
-                Licenses.new([self, other])
-            end
-
-            def ==(other)
-                self.to_s == other.to_s
-            end
-
             def to_s
                 permits = @permits.join(', ') if not @permits.empty?
                 requires = @requires.join(', ') if not @requires.empty?
@@ -88,7 +81,8 @@ module Licc
                 """.strip.gsub(/  +/, '')
             end
 
-            def combinable_with?(other)
+            private
+            def combinable_with_ccrel?(other)
                 # You can't combine with something that you can't make
                 # derivative works of.
                 if not (permits.include? 'DerivativeWorks' and other.permits.include? 'DerivativeWorks')
@@ -106,7 +100,7 @@ module Licc
                 true
             end
 
-            def relicensable_to?(other)
+            def relicensable_to_ccrel?(other)
                 # You can't change the license of something that you can't make
                 # derivative works of.
                 return false if not permits.include? 'DerivativeWorks'
